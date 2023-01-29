@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<title>OrderDetail</title>
+    <link rel="stylesheet" type="text/css" href="/css/all.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pages-getOrderInfo.css" />
+	<link rel="icon" href="img/icon.png">
+</head>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+  window.onload = function() {
+	var request = new Object();
+	request = GetRequest();
+	var orderNumber = request["orderNumber"];
+	console.log(orderNumber);
+	$.ajax({
+		type: 'GET',
+		url: 'http://localhost:8090/order/id/' + orderNumber,
+		headers: {
+				'Content-Type': 'application/json;charset=UTF-8'
+		},
+		success: function (data) {
+				console.log(data);
+				$('#orderNumber').html(data.orderNumber);
+				var orderStatus = data.orderStatus;
+				if (orderStatus == -1) {
+					$('#orderStatus').html("Sold Out");
+				}
+				else if (orderStatus == 1) {$('#orderStatus').html("Created, waiting for paying");}
+				else if (orderStatus == 2) {
+					$('#orderStatus').html("Payed, waiting for delivering");
+				}
+				else if (orderStatus == 3) {
+					$('#orderStatus').html("Order is closed，cause of paying overtime");
+				}
+
+				var promotionName = data.promotionName;
+				$('#promotionName').html(promotionName);
+
+				var createTime = data.createTime;
+				$('#createTime').html(createTime);
+
+				var orderAmount = data.orderAmount;
+				$('#orderAmount').html(orderAmount);
+		},
+		error: function (data) {
+				alert("Order info is on the way~ Please refresh a moment");
+		}
+	});
+  };
+</script>
+
+<body>
+	<!--head-->
+	<!-- 头部栏位 -->
+	<!--页面顶部-->
+	<div id="nav-bottom">
+		<!--top-->
+		<div class="nav-top">
+			<div class="top">
+				<div class="py-container">
+					<div class="shortcut">
+						<ul class="fl">
+							<li class="f-item"></li>
+							<li class="f-item"><a href="login.html" target="_blank" id="account_action">please login</a></li>
+						</ul>
+						<div class="fr">
+							<ul class="types">
+								<li class="f-item"><span><a href="order.html" target="_blank">My Order</a></span></li>
+								<li class="f-item"><span><a href="cart.html" target="_blank">My Cart</a></span></li>
+								<li class="f-item"><span>Menu</span></li>
+							</ul>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<!--头部-->
+			<div class="header">
+				<div class="py-container">
+					<div class="yui3-g Logo">
+						<div class="yui3-u Left logoArea">
+							<a class="logo-bd" href="promotion_activity.html" target="_blank"></a>
+						</div>
+						<div class="yui3-u Rit searchArea">
+							<div class="search">
+								<form action="" class="sui-form form-inline">
+									<!--searchAutoComplete-->
+									<div class="input-append">
+										<input type="text" id="autocomplete" class="input-error input-xxlarge" />
+										<button class="sui-btn btn-xlarge btn-danger" type="button">search</button>
+									</div>
+								</form>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="cart py-container" id="cart">
+		<!--主内容-->
+		<div class="checkout py-container">
+			<div class="checkout-tit">
+				<h4 class="tit-txt">Order Detail</h4>
+			</div>
+			<div class="checkout-steps">
+				<div class="hr"></div>
+				<!--支付和送货-->
+				<div class="payshipInfo">
+					<div class="step-tit">
+						<h5>Payment</h5>
+					</div>
+					<div class="step-cont">
+						<ul class="payType">
+							<li class="selected" @click="order.payType='1'">PayPal<span title="ClickToCancel"></span></li>
+							<li @click="order.payType='0'">PayByCard<span title="ClickToCancel"></span></li>
+
+						</ul>
+					</div>
+					<div class="hr"></div>
+					<div class="step-cont">
+						<ul class="send-detail">
+							<li>
+								<div class="sendGoods">
+									<span>Order Number：</span><em id="orderNumber"></em>
+								</div>
+								<div class="sendGoods">
+									<span>Order Status：</span>
+									<em >
+										<span id="orderStatus"></span>
+									</em>
+								</div>
+								<div class="sendGoods">
+									<span>Promotion Name：</span><em id="promotionName"></em>
+								</div>
+								<div class="sendGoods">
+									<span>Order Created Time：</span><em id="createTime"></em>
+								</div>
+							</li>
+							<li></li>
+							<li></li>
+						</ul>
+					</div>
+					<div class="hr"></div>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix trade">
+			<div class="fc-price">SubTotal:　<span class="price"></span></div>
+			<em id="orderAmount"></em>
+		</div>
+
+		<em th:switch="${order.orderStatus}">
+			<span th:case="1">
+				<div class="submit">
+					<button class="sui-btn btn-danger btn-xlarge" id="pay_button" onclick="pay()">PAY</button>
+					<script type="text/javascript">
+					function createPayDto(){
+						var obj = {};
+						obj["existStatus"] = 1;
+						obj["orderNumber"] = document.getElementById('orderNumber').innerHTML;
+						obj["expectStatus"] = 2;
+						console.log(obj);
+						return obj;
+					}
+					function pay(){
+						var jsonObj = createPayDto()
+						var jsonStr = JSON.stringify(jsonObj);
+
+						// call pay function
+						$.ajax({
+							type: 'PATCH',
+							url: 'http://localhost:8090/order/pay',
+							data: jsonStr,
+							headers: {
+									'Content-Type': 'application/json;charset=UTF-8'
+							},
+							success: function (data) {
+									console.log(data);
+									$('#orderNumber').html(orderNumber);
+
+									var orderStatus = data.orderStatus;
+									if (orderStatus == 0) {$('#orderStatus').html("Sold Out");}
+									else if (orderStatus == 1) {$('#orderStatus').html("Created, waiting for paying");}
+									else if (orderStatus == 2) {
+										$('#orderStatus').html("Payed, waiting for delivering");
+										alarm("Pay successfully!")
+									}
+									else if (orderStatus == 3) {
+										$('#orderStatus').html("Order is closed，cause of paying overtime");
+										alarm("Pay failed");
+									}
+							},
+							error: function (data) {
+									alert("error: " + data);
+							}
+						});
+					}
+        </script>
+				</div>
+			</span>
+		</em>
+
+	</div>
+
+	<div class="py-container">
+		<div id="item">
+			<!--like-->
+			<div class="clearfix"></div>
+			<hr/>
+			<div class="like">
+				<h4 class="kt">You might also like</h4>
+				<div class="like-list">
+					<ul class="yui3-g">
+						<li class="yui3-u-1-6">
+							<div class="list-wrap">
+								<div class="p-img">
+									<img src="/img/recommendation/dell15inch.jpg" />
+								</div>
+								<div class="attr">
+									<em>DELL Ins 15MR-7528SS 15 Inch Silver</em>
+								</div>
+								<div class="price">
+									<strong>
+										<em>$</em>
+										<i>928.00</i>
+									</strong>
+								</div>
+								<div class="commit">
+									<i class="command">Total 6 reviews</i>
+								</div>
+							</div>
+						</li>
+						<li class="yui3-u-1-6">
+							<div class="list-wrap">
+								<div class="p-img">
+									<img src="/img/recommendation/3080ti.jpg" />
+								</div>
+								<div class="attr">
+									<em>NVIDIA GeForce RTX 3080 Ti 12GB GDDR6X Video Card</em>
+								</div>
+								<div class="price">
+									<strong>
+										<em>$</em>
+										<i>1149.00</i>
+									</strong>
+								</div>
+								<div class="commit">
+									<i class="command">Total 700 reviews</i>
+								</div>
+							</div>
+						</li>
+						<li class="yui3-u-1-6">
+							<div class="list-wrap">
+								<div class="p-img">
+									<img src="/img/recommendation/corsair_tank.jpg" />
+								</div>
+								<div class="attr">
+									<em>Corsair 4000D Airflow Mid-Tower ATX Computer Case - White</em>
+								</div>
+								<div class="price">
+									<strong>
+										<em>$</em>
+										<i>257.00</i>
+									</strong>
+								</div>
+								<div class="commit">
+									<i class="command">Total 700 reviews</i>
+								</div>
+							</div>
+						</li>
+						<li class="yui3-u-1-6">
+							<div class="list-wrap">
+								<div class="p-img">
+									<img src="/img/recommendation/razer.jpg" />
+								</div>
+								<div class="attr">
+									<em>Razer DeathAdder V2 20000 DPI Optical Gaming Mouse - Black</em>
+								</div>
+								<div class="price">
+									<strong>
+										<em>$</em>
+										<i>78.00</i>
+									</strong>
+								</div>
+								<div class="commit">
+									<i class="command">Total 354 reviews</i>
+								</div>
+							</div>
+						</li>
+						<li class="yui3-u-1-6">
+							<div class="list-wrap">
+								<div class="p-img">
+									<img src="/img/recommendation/keyboard.jpg" />
+								</div>
+								<div class="attr">
+									<em>Razer Huntsman V2 Full Backlit Mechanical Clicky Purple Optical Ergonomic Gaming Keyboard</em>
+								</div>
+								<div class="price">
+									<strong>
+										<em>$</em>
+										<i>239.00</i>
+									</strong>
+								</div>
+								<div class="commit">
+									<i class="command">Total 786 reviews</i>
+								</div>
+							</div>
+						</li>
+						<li class="yui3-u-1-6">
+							<div class="list-wrap">
+								<div class="p-img">
+									<img src="/img/recommendation/chair.jpg" />
+								</div>
+								<div class="attr">
+									<em>Brassex Fresno Ergonomic Faux Leather Pedestal Gaming Chair - Black/Blue</em>
+								</div>
+								<div class="price">
+									<strong>
+										<em>$</em>
+										<i>349.00</i>
+									</strong>
+								</div>
+								<div class="commit">
+									<i class="command">Total 143 reviews</i>
+								</div>
+							</div>
+						</li>
+						<li class="yui3-u-1-6">
+							<div class="list-wrap">
+								<div class="p-img">
+									<img src="/img/recommendation/memory.jpg" />
+								</div>
+								<div class="attr">
+									<em>Corsair Vengeance RGB PRO 16GB (2 x 8GB) DDR4 3000MHz Desktop Memory</em>
+								</div>
+								<div class="price">
+									<strong>
+										<em>$</em>
+										<i>79.00</i>
+									</strong>
+								</div>
+								<div class="commit">
+									<i class="command">Total 738 reviews</i>
+								</div>
+							</div>
+						</li>
+						<li class="yui3-u-1-6">
+							<div class="list-wrap">
+								<div class="p-img">
+									<img src="/img/recommendation/desk.jpg" />
+								</div>
+								<div class="attr">
+									<em>LHD 54" Turbo XL Gaming Desk w/ USB Ports, Wireless Charging, LED Lighting & Added Storage</em>
+								</div>
+								<div class="price">
+									<strong>
+										<em>$</em>
+										<i>289.00</i>
+									</strong>
+								</div>
+								<div class="commit">
+									<i class="command">Total 73 reviews</i>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 底部栏位 -->
+	<!--页面底部-->
+	<div class="clearfix footer">
+		<div class="py-container">
+			<div class="footlink">
+				<hr/>
+				<div class="Mod-service">
+					<ul class="Mod-Service-list">
+						<li class="grid-service-item intro  intro1">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Quick and Easy</h4>
+								<h4>Store Pickup</h4>
+							</div>
+						</li>
+						<li class="grid-service-item  intro intro2">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Free shipping</h4>
+								<h4>over $35</h4>
+							</div>
+						</li>
+						<li class="grid-service-item intro  intro3">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Low Price</h4>
+								<h4>Guarantee</h4>
+							</div>
+						</li>
+						<li class="grid-service-item  intro intro4">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Latest and</h4>
+								<h4>Greatest Tech</h4>
+							</div>
+						</li>
+
+						<li class="grid-service-item  intro intro5">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Coupons and</h4>
+								<h4>More Promotion</h4>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div class="clearfix Mod-list">
+					<div class="yui3-g">
+						<div class="yui3-u-1-6">
+							<h4>Customer Support</h4>
+							<ul class="unstyled">
+								<li>Contact Us</li>
+								<li>Help Centre</li>
+								<li>Return & Exchanges</li>
+								<li>SkillUp Financing</li>
+								<li>SkillUp Gift Card</li>
+							</ul>
+						</div>
+						<div class="yui3-u-1-6">
+							<h4>Account</h4>
+							<ul class="unstyled">
+								<li></li>
+								<li>Order Status</li>
+								<li>Manage Account</li>
+								<li>Email Preferences</li>
+							</ul>
+						</div>
+						<div class="yui3-u-1-6">
+							<h4>Service</h4>
+							<ul class="unstyled">
+								<li>Geek Squad</li>
+								<li>In-Home Advisor</li>
+								<li>Trade-In Program</li>
+								<li>Electronics Recycling</li>
+								<li>SkillUp Health</li>
+							</ul>
+						</div>
+						<div class="yui3-u-1-6">
+							<h4>About Us</h4>
+							<ul class="unstyled">
+								<li>Careers</li>
+								<li>Corporate Information</li>
+								<li>About SkillUp Marketplace</li>
+								<li>Sell on SkillUp Marketplace</li>
+								<li>SkillUp Affiliate Program</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--页面底部END-->
+<!--页面底部END-->
+<script src="js/skill_up_internal/util.js"></script>
+
+</body>
+</html>

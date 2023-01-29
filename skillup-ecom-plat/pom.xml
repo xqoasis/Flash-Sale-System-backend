@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.skillup</groupId>
+    <artifactId>skillup-ecom-plat</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.3</version>
+        <relativePath/>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- mysql connection -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- flyway-->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+        </dependency>
+        <!-- Jooq, ORM object-relational mapping database -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Redis Libraries -->
+        <!--springboot中的redis依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!-- lettuce pool 缓存连接池-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+
+        <!-- useful tools -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- test tools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>2.0.21</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.14.1</version>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>3.14.16</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- 目标generate用于生成Java代码 -->
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- JOOQ单独配置JDBC链接 -->
+                    <jdbc>
+                        <driver>com.mysql.cj.jdbc.Driver</driver>
+                        <url>jdbc:mysql://localhost:3306/skillup?serverTimezone=GMT</url>
+                        <user>root</user>
+                        <password>67987201</password>
+                    </jdbc>
+                    <generator>
+                        <!-- 代码生成器 -->
+                        <!--<name>org.jooq.util.JavaGenerator</name>-->
+                        <name>org.jooq.codegen.JavaGenerator</name>
+                        <database>
+                            <!--下面这两行是为view也生成代码的关键，不需要view不用配置-->
+                            <!--force generating id'sfor everything in public schema, that has an 'id' field-->
+                            <!--                            <syntheticPrimaryKeys>public\..*\.id</syntheticPrimaryKeys>-->
+                            <!--name for fake primary key-->
+                            <!--                            <overridePrimaryKeys>override_primmary_key</overridePrimaryKeys>-->
+
+                            <!--<name>org.jooq.util.mysql.MySQLDatabase</name>-->
+                            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+
+                            <!--include和exclude用于控制为数据库中哪些表生成代码-->
+                            <includes>.*</includes>
+                            <!-- excludes不同表之间用竖杠分隔-->
+                            <excludes>
+                                flyway_schema_history
+                                | skillup_employee
+                            </excludes>
+
+                            <!--数据库名称-->
+                            <inputSchema>skillup</inputSchema>
+                        </database>
+
+                        <generate>
+                            <!--生成dao和pojo-->
+                            <!--                            <daos>true</daos>-->
+                            <!--                            <pojos>true</pojos>-->
+                            <!--把数据库时间类型映射到java 8时间类型-->
+                            <javaTimeTypes>true</javaTimeTypes>
+                            <!--<interfaces>true</interfaces>-->
+                            <!--不在生成的代码中添加spring注释，比如@Repository-->
+                            <springAnnotations>ture</springAnnotations>
+                        </generate>
+
+                        <target>
+                            <!--生成代码文件的包名及放置目录-->
+                            <packageName>com.skillup.infrastructure.jooq</packageName>
+                            <directory>src/main/java</directory>
+                        </target>
+                    </generator>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<title>SkillUp-BlackFriday-Promotion</title>
+	<link rel="icon" href="img/icon.png">
+
+	<!-- 引入样式 -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<link rel="stylesheet" type="text/css" href="css/all.css" />
+	<link rel="stylesheet" type="text/css" href="css/pages-skillup-index.css" />
+</head>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+window.onload = function() {
+	var request = new Object();
+	request = GetRequest();
+	un_activate_status = 0;
+	activate_status = 1;
+	$.ajax({
+		type: 'GET',
+		url: 'http://localhost:8090/promotion/status/' + activate_status,
+		headers: {
+			'Content-Type': 'application/json;charset=UTF-8'
+		},
+		success: function (list) {
+			$.each(list, function(key, promotion) {
+				console.log(promotion);
+				cover = "img/items/"+ promotion.imageUrl + "/cover.jpg";
+				$('#seckill').append("<li class='seckill-item'>\
+											<div class='pic'>\
+												<img src='" + cover + "' alt=''>\
+											</div>\
+											<div class='intro'>\
+												<span>" + promotion.promotionName + "</span>\
+											</div>\
+											<div class='price'>\
+												<b class='sec-price'>" + "$" + promotion.promotionalPrice + "</b>\
+												<b class='ever-price'>" + "$" + "<del>" + promotion.originalPrice + "</del></b>\
+											</div>\
+											<div class='num'>\
+												<div>Sold&nbsp;" + (promotion.totalStock - promotion.availableStock) + "</div>\
+												<div class='progress'>\
+													<div class='sui-progress progress-danger'>\
+														<span style='width: " + (promotion.availableStock/promotion.totalStock*100) + "%;' class='bar'></span>\
+													</div>\
+												</div>\
+												<div>Storage &nbsp;<b class='owned'>" + promotion.availableStock + "</b>piece</div>\
+											</div>\
+											<a class='sui-btn btn-block btn-buy' target='_blank' href='" + "promotion_item.html?id=" + promotion.promotionId + "'>Buy Now</a>\
+										</li>");
+			})
+		}
+	});
+}
+</script>
+
+<body>
+	<!-- 头部栏位 -->
+	<!--页面顶部-->
+	<div id="nav-bottom">
+		<!--top-->
+		<div class="nav-top">
+			<div class="top">
+				<div class="py-container">
+					<div class="shortcut">
+						<ul class="fl">
+							<li class="f-item"></li>
+							<li class="f-item"><a href="login.html" target="_blank" id="account_action">please login</a></li>
+						</ul>
+						<div class="fr">
+							<ul class="types">
+								<li class="f-item"><span><a href="order.html" target="_blank">My Order</a></span></li>
+								<li class="f-item"><span><a href="cart.html" target="_blank">My Cart</a></span></li>
+								<li class="f-item"><span>Menu</span></li>
+							</ul>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<!--头部-->
+			<div class="header">
+				<div class="py-container">
+					<div class="yui3-g Logo">
+						<div class="yui3-u Left logoArea">
+							<a class="logo-bd" href="promotion_activity.html" target="_blank"></a>
+						</div>
+						<div class="yui3-u Rit searchArea">
+							<div class="search">
+								<form action="" class="sui-form form-inline">
+									<!--searchAutoComplete-->
+									<div class="input-append">
+										<input type="text" id="autocomplete" class="input-error input-xxlarge" />
+										<button class="sui-btn btn-xlarge btn-danger" type="button">search</button>
+									</div>
+								</form>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="py-container index">
+		<!--banner-->
+		<div class="banner">
+			<img src="img/_/black_friday.png" class="img-responsive" alt="">
+		</div>
+		<!--Time Slot-->
+		<div class="sectime">
+			<div class="item-time active">
+				<div class="time-clock">12:00</div>
+				<div class="time-state-on">
+					<span class="on-text">Processing</span>
+					<span class="on-over">Time to End：01:02:34</span>
+				</div>
+			</div>
+			<div class="item-time">
+				<div class="time-clock">14:00</div>
+				<div class="time-state-will">
+					<span>Start Soon</span>
+				</div>
+			</div>
+			<div class="item-time">
+				<div class="time-clock">16:00</div>
+				<div class="time-state-will">
+					<span>Start Soon</span>
+				</div>
+			</div>
+			<div class="item-time">
+				<div class="time-clock">18:00</div>
+				<div class="time-state-will">
+					<span>Start Soon</span>
+				</div>
+			</div>
+			<div class="item-time">
+				<div class="time-clock">20:00</div>
+				<div class="time-state-will">
+					<span>Start Soon</span>
+				</div>
+			</div>
+		</div>
+		<!--Promotion Activity List-->
+		<div class="goods-list" id="app">
+			<ul class="seckill" id="seckill">
+			</ul>
+		</div>
+
+		<div class="cd-top">
+			<div class="top">
+				<img src="img/_/gotop.png" />
+				<b>TOP</b>
+			</div>
+			<div class="code" id="code">
+				<span>
+					<img src="img/_/code.png" />
+				</span>
+			</div>
+			<div class="erweima">
+				<img src="img/_/erweima.jpg" alt="">
+				<s></s>
+			</div>
+		</div>
+	</div>
+	<!-- 底部栏位 -->
+	<!--页面底部-->
+	<div class="clearfix footer">
+		<div class="py-container">
+			<div class="footlink">
+				<div class="Mod-service">
+					<ul class="Mod-Service-list">
+						<li class="grid-service-item intro  intro1">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Quick and Easy</h4>
+								<h4>Store Pickup</h4>
+							</div>
+						</li>
+						<li class="grid-service-item  intro intro2">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Free shipping</h4>
+								<h4>over $35</h4>
+							</div>
+						</li>
+						<li class="grid-service-item intro  intro3">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Low Price</h4>
+								<h4>Guarantee</h4>
+							</div>
+						</li>
+						<li class="grid-service-item  intro intro4">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Latest and</h4>
+								<h4>Greatest Tech</h4>
+							</div>
+						</li>
+
+						<li class="grid-service-item  intro intro5">
+							<i class="serivce-item fl"></i>
+							<div class="service-text">
+								<h4>Coupons and</h4>
+								<h4>More Promotion</h4>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div class="clearfix Mod-list">
+					<div class="yui3-g">
+						<div class="yui3-u-1-6">
+							<h4>Customer Support</h4>
+							<ul class="unstyled">
+								<li>Contact Us</li>
+								<li>Help Centre</li>
+								<li>Return & Exchanges</li>
+								<li>SkillUp Financing</li>
+								<li>SkillUp Gift Card</li>
+							</ul>
+						</div>
+						<div class="yui3-u-1-6">
+							<h4>Account</h4>
+							<ul class="unstyled">
+								<li></li>
+								<li>Order Status</li>
+								<li>Manage Account</li>
+								<li>Email Preferences</li>
+							</ul>
+						</div>
+						<div class="yui3-u-1-6">
+							<h4>Service</h4>
+							<ul class="unstyled">
+								<li>Geek Squad</li>
+								<li>In-Home Advisor</li>
+								<li>Trade-In Program</li>
+								<li>Electronics Recycling</li>
+								<li>SkillUp Health</li>
+							</ul>
+						</div>
+						<div class="yui3-u-1-6">
+							<h4>About Us</h4>
+							<ul class="unstyled">
+								<li>Careers</li>
+								<li>Corporate Information</li>
+								<li>About SkillUp Marketplace</li>
+								<li>Sell on SkillUp Marketplace</li>
+								<li>SkillUp Affiliate Program</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="js/skill_up_internal/util.js"></script>
+</body>
+</html>

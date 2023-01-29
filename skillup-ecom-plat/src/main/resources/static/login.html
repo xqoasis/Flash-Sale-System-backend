@@ -1,0 +1,252 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+  <title>SkillUp-Login</title>
+  <link rel="icon" href="img/icon.png">
+
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <link rel="stylesheet" type="text/css" href="css/all.css" />
+  <link rel="stylesheet" type="text/css" href="css/pages-skillup-index.css" />
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+</head>
+
+<body bgcolor="#1E81C2">
+  <!--页面顶部-->
+  <div id="nav-bottom">
+    <!--top-->
+    <div class="nav-top">
+      <div class="top">
+        <div class="py-container">
+          <div class="shortcut">
+            <ul class="fl">
+              <li class="f-item"></li>
+              <li class="f-item"><a href="login.html" target="_blank" id="account_action">please login</a></li>
+            </ul>
+            <div class="fr">
+              <ul class="types">
+                <li class="f-item"><span><a href="order.html" target="_blank">My Order</a></span></li>
+                <li class="f-item"><span><a href="cart.html" target="_blank">My Cart</a></span></li>
+                <li class="f-item"><span>Menu</span></li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!--头部-->
+      <div class="header">
+        <div class="py-container">
+          <div class="yui3-g Logo">
+            <div class="yui3-u Left logoArea">
+              <a class="logo-bd" href="promotion_activity.html" target="_blank"></a>
+            </div>
+            <div class="yui3-u Rit searchArea">
+              <div class="search">
+                <form action="" class="sui-form form-inline">
+                  <!--searchAutoComplete-->
+                  <div class="input-append">
+                    <input type="text" id="autocomplete" class="input-error input-xxlarge" />
+                    <button class="sui-btn btn-xlarge btn-danger" type="button">search</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--主内容-->
+  <div class="checkout py-container">
+    <div class="checkout-tit">
+      <h4 class="tit-txt">Welcome to SkillUp Page!</h4>
+    </div>
+    <div class="py-container" >
+      <form name="loginForm" >
+        <div  id="loginFormMain">
+          <table  style="width:468px;height:262px;background-color: gray;text-align: center;">
+            <tr>
+              <th colspan="2" align="center" >Skill Up Login</th>
+            </tr>
+            <tr>
+              <td>UserName:<input type="text" style="width: 200px;height: 30px;"  name="username"></td>
+            </tr>
+            <tr>
+              <td>PassWord:<input type="password"  style="width: 200px;height: 30px;"  name="password"></td>
+            </tr>
+            <tr>
+              <td align="center" >
+                <input type="button" onclick="login()" value="Sign in" >
+                <input  type="button" onclick="signup()" value="Sign up" >
+            </tr>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!--页面底部-->
+  <div class="clearfix footer">
+    <div class="py-container">
+      <div class="footlink">
+        <div class="clearfix Mod-list">
+          <div class="yui3-g">
+            <div class="yui3-u-1-6">
+              <h4>Customer Support</h4>
+              <ul class="unstyled">
+                <li>Contact Us</li>
+                <li>Help Centre</li>
+                <li>Return & Exchanges</li>
+                <li>SkillUp Financing</li>
+                <li>SkillUp Gift Card</li>
+              </ul>
+            </div>
+            <div class="yui3-u-1-6">
+              <h4>Account</h4>
+              <ul class="unstyled">
+                <li></li>
+                <li>Order Status</li>
+                <li>Manage Account</li>
+                <li>Email Preferences</li>
+              </ul>
+            </div>
+            <div class="yui3-u-1-6">
+              <h4>Service</h4>
+              <ul class="unstyled">
+                <li>Geek Squad</li>
+                <li>In-Home Advisor</li>
+                <li>Trade-In Program</li>
+                <li>Electronics Recycling</li>
+                <li>SkillUp Health</li>
+              </ul>
+            </div>
+            <div class="yui3-u-1-6">
+              <h4>About Us</h4>
+              <ul class="unstyled">
+                <li>Careers</li>
+                <li>Corporate Information</li>
+                <li>About SkillUp Marketplace</li>
+                <li>Sell on SkillUp Marketplace</li>
+                <li>SkillUp Affiliate Program</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--页面底部END-->
+  <script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
+  <script src="/js/vue.js"></script>
+  <script src="/js/axios.js"></script>
+
+  <script src="js/skill_up_internal/util.js"></script>
+  <script type="text/javascript">
+    function login() {
+      if(!checkInput()) return;
+      var username = document.loginForm.username.value;
+			var password = document.loginForm.password.value;
+
+      var jsonObj = {};
+      jsonObj["userName"] = username;
+      jsonObj["password"] = password;
+
+      var jsonStr = JSON.stringify(jsonObj);
+
+      $.ajax({
+          type: 'POST',
+          url: 'http://localhost:8090/account/login',
+          data: jsonStr,
+          headers: {
+              'Content-Type': 'application/json;charset=UTF-8'
+          },
+          success: function (data) {
+              alert("login! ");
+              setCookie("user_name", data.result.userName);
+              setCookie("user_id", data.result.userId);
+              //refresh account status： longin
+              account_status();
+              <!-- window.location.href = "promotion_activity.html;-->
+              window.close();
+          },
+          error: function (data) {
+              console.log(data);
+              // alert("error: " + data.responseText);
+              alert("error: " + data.responseJSON.msg);
+
+          }
+      });
+      return false;
+    }
+
+    function signup() {
+      if(!checkInput()) return;
+      var username = document.loginForm.username.value;
+      var password = document.loginForm.password.value;
+
+      var jsonObj = {};
+      jsonObj["userName"] = username;
+      jsonObj["password"] = password;
+
+      var jsonStr = JSON.stringify(jsonObj);
+
+      $.ajax({
+          type: 'POST',
+          url: 'http://localhost:8090/account',
+          data: jsonStr,
+          headers: {
+              'Content-Type': 'application/json;charset=UTF-8'
+          },
+          success: function (data) {
+              alert("signup! ");
+              console.log(data);
+              document.cookie="name="+data.result.userName;
+              account_status();
+              <!-- window.location.href = "promotion_activity.html;-->
+          },
+          error: function (data) {
+              console.log(data);
+              //alert("error: " + data.responseText);
+              alert("error: " + data.responseJSON.msg);
+          }
+      });
+      return false;
+    }
+
+    //检查用户输入
+		function checkInput(){
+			if(checkUsername() && checkPassword()){
+				 return true;
+			 }
+			return false;
+		}
+		//检查登录用户名
+		function checkUsername(){
+			var username = document.loginForm.username;
+			if(username.value.length!=0){
+				return true;
+			}else{
+				alert("Please input username");
+				return false;
+			}
+		}
+		//检查登录密码
+		function checkPassword(){
+			var password = document.loginForm.password;
+			if(password.value.length!=0){
+				return true;
+			}else{
+				alert("Please input password");
+				return false;
+			}
+		}
+	</script>
+</body>
+</html>

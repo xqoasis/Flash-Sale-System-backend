@@ -1,0 +1,39 @@
+server:
+  port: 8090
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/skillup?serverTimezone=GMT&useUnicode=true&characterEncoding=utf8&useSSL=true
+    username: root
+    password: 67987201
+
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+  # Redis数据库索引（默认为0）
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    # password
+    #客户端超时时间
+    timeout: 0
+    pool:
+      max-active: 200
+      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-wait: -1
+      # 连接池中的最大空闲连接
+      max-idle: 8
+      # 连接池中的最小空闲连接
+      min-idle: 0
+  #spring-session 使用
+  session.store-type: none
+
+
+promotion:
+  # stock-strategy: oversell
+  # stock-strategy: sync
+  stock-strategy: optimistic-stock
+order:
+  data-center: 1
+  machine-num: 1

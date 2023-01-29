@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <title>SkillUp-Promotion-Management</title>
+    <link rel="icon" href="img/icon.png">
+
+    <link rel="stylesheet" type="text/css" href="/css/all.css" />
+    <link rel="stylesheet" type="text/css" href="/css/add_promotion.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pages-getOrderInfo.css" />
+</head>
+
+<body>
+    <!--head-->
+    <!--page top-->
+    <div id="nav-bottom">
+    <!--top-->
+    <div class="nav-top">
+    <div class="top">
+        <div class="py-container">
+            <div class="shortcut">
+                <ul class="fl">
+                    <li class="f-item"></li>
+                    <li class="f-item"><a href="login.html" target="_blank" id="account_action">please login</a></li>
+                </ul>
+                <div class="fr">
+                    <ul class="types">
+                        <li class="f-item"><span><a href="order.html" target="_blank">My Order</a></span></li>
+                        <li class="f-item"><span><a href="cart.html" target="_blank">My Cart</a></span></li>
+                        <li class="f-item"><span>Menu</span></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--头部-->
+    <div class="header">
+        <div class="py-container">
+            <div class="yui3-g Logo">
+                <div class="yui3-u Left logoArea">
+                    <a class="logo-bd" href="promotion_activity.html" target="_blank"></a>
+                </div>
+                <div class="yui3-u Rit searchArea">
+                    <div class="search">
+                        <form action="" class="sui-form form-inline">
+                            <!--searchAutoComplete-->
+                            <div class="input-append">
+                                <input type="text" id="autocomplete" class="input-error input-xxlarge" />
+                                <button class="sui-btn btn-xlarge btn-danger" type="button">search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    </div>
+    </div>
+    <!--Content -->
+    <div class="cart py-container" id="cart">
+    <!--主内容-->
+    <div class="checkout py-container">
+    <div class="checkout-tit">
+        <h4 class="tit-txt">Create New Promotion</h4>
+    </div>
+    <div class="checkout-steps">
+        <div class="hr"></div>
+        <div class="payshipInfo">
+            <div class="hr"></div>
+            <div class="step-cont">
+                <ul class="send-detail">
+                    <li>
+                        <div class="sendGoods">
+                            <form id="create_promotion">
+                                <label>PromotionName: </label><input width="70%" type="text" name="promotionName"><br><br>
+                                <label>CommodityId：</label><input type="text" name="commodityId"><br><br>
+                                <label>OriginalPrice：</label><input type="text" name="originalPrice"><br><br>
+                                <label>PromotionalPrice：</label><input type="text" name="promotionalPrice"><br><br>
+                                <label>ActivityStatus: </label><input type="text" name="status" value=0><br><br>
+                                <label>StartTime：</label><input type="datetime-local" name="startTime" ><br><br>
+                                <label>EndTime：</label><input type="datetime-local" name="endTime"><br><br>
+                                <label>TotalStock：</label><input type="text" name="totalStock"><br><br>
+                                <label>AvailableStock：</label><input type="text" name="availableStock"><br><br>
+                                <label>LockStock: </label><input type="text" name="lockStock" value=0><br><br>
+                                <label>ImageUrl: </label><input type="text" name="imageUrl" value=0><br><br>
+                                <input type="button" value="submit" onclick="fc()">
+                            </form>
+                            <script type="text/javascript">
+                            function fc() {
+                                const formData = new FormData(document.getElementById("create_promotion"));
+                                console.log(formData);
+                                var jsonObj = serializeForm(formData);
+                                console.log(jsonObj);
+                                var jsonStr = JSON.stringify(jsonObj);
+                                console.log(jsonStr);
+
+                                $.ajax({
+                                    type: 'POST',
+                                    url: 'http://localhost:8090/promotion',
+                                    data: jsonStr,
+                                    headers: {
+                                        'Content-Type': 'application/json;charset=UTF-8'
+                                    },
+                                    success: function (data) {
+                                        window.location.href = "add_success.html?id=" + data.promotionId;
+                                    },
+                                    error: function (data) {
+                                        alert("error: " + data);
+                                    }
+                                });
+                                return false;
+                            }
+                            </script>
+                        </div>
+
+                    </li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="hr"></div>
+        </div>
+    </div>
+    </div>
+    </div>
+    <!-- 底部栏位 -->
+    <!--页面底部-->
+    <div class="clearfix footer">
+    <div class="py-container">
+    <div class="footlink">
+        <div class="Mod-service">
+            <ul class="Mod-Service-list">
+                <li class="grid-service-item intro  intro1">
+                    <i class="serivce-item fl"></i>
+                    <div class="service-text">
+                        <h4>Quick and Easy</h4>
+                        <h4>Store Pickup</h4>
+                    </div>
+                </li>
+                <li class="grid-service-item  intro intro2">
+                    <i class="serivce-item fl"></i>
+                    <div class="service-text">
+                        <h4>Free shipping</h4>
+                        <h4>over $35</h4>
+                    </div>
+                </li>
+                <li class="grid-service-item intro  intro3">
+                    <i class="serivce-item fl"></i>
+                    <div class="service-text">
+                        <h4>Low Price</h4>
+                        <h4>Guarantee</h4>
+                    </div>
+                </li>
+                <li class="grid-service-item  intro intro4">
+                    <i class="serivce-item fl"></i>
+                    <div class="service-text">
+                        <h4>Latest and</h4>
+                        <h4>Greatest Tech</h4>
+                    </div>
+                </li>
+
+                <li class="grid-service-item  intro intro5">
+                    <i class="serivce-item fl"></i>
+                    <div class="service-text">
+                        <h4>Coupons and</h4>
+                        <h4>More Promotion</h4>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="clearfix Mod-list">
+            <div class="yui3-g">
+                <div class="yui3-u-1-6">
+                    <h4>Customer Support</h4>
+                    <ul class="unstyled">
+                        <li>Contact Us</li>
+                        <li>Help Centre</li>
+                        <li>Return & Exchanges</li>
+                        <li>SkillUp Financing</li>
+                        <li>SkillUp Gift Card</li>
+                    </ul>
+                </div>
+                <div class="yui3-u-1-6">
+                    <h4>Account</h4>
+                    <ul class="unstyled">
+                        <li></li>
+                        <li>Order Status</li>
+                        <li>Manage Account</li>
+                        <li>Email Preferences</li>
+                    </ul>
+                </div>
+                <div class="yui3-u-1-6">
+                    <h4>Service</h4>
+                    <ul class="unstyled">
+                        <li>Geek Squad</li>
+                        <li>In-Home Advisor</li>
+                        <li>Trade-In Program</li>
+                        <li>Electronics Recycling</li>
+                        <li>SkillUp Health</li>
+                    </ul>
+                </div>
+                <div class="yui3-u-1-6">
+                    <h4>About Us</h4>
+                    <ul class="unstyled">
+                        <li>Careers</li>
+                        <li>Corporate Information</li>
+                        <li>About SkillUp Marketplace</li>
+                        <li>Sell on SkillUp Marketplace</li>
+                        <li>SkillUp Affiliate Program</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    <!--页面底部END-->
+    <script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
+
+    <script src="/js/vue.js"></script>
+    <script src="/js/axios.js"></script>
+    <script src="js/skill_up_internal/util.js"></script>
+
+</body>
+</html>
