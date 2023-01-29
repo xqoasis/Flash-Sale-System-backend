@@ -10,7 +10,7 @@
     - Implemented cache preheating for active promotions. Completed lock and revert inventory service through Redis and Lua script.
     - Peak-load shifting order service stress by asynchronously create order using RocketMQ. Implemented "Pay-Check&Cancel" by consuming delay message. And optimized optimistic-lock of updating inventory in MySQL database.
 - test: Postman; Jmeter
-- JIRA (canary mode)
+- workflow: JIRA (canary mode)
 
 
 ## Version1
